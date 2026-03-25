@@ -150,13 +150,10 @@ def detect_answers(marks):
             col_values = []
 
             for r in range(r_start, r_end):
-                val = marks[r][c]
-                if val > 0:
-                    col_values.append((r - r_start, val))
+                if marks[r][c] > 0:
+                    col_values.append(r - r_start)
 
-            # ratio 큰 순 정렬
-            col_values.sort(key=lambda x: x[0], reverse=True)
-
-            answers.append([i+1 for i, _ in col_values])
+            answers.append(col_values)
+    #print('answers:', answers)
 
     return answers

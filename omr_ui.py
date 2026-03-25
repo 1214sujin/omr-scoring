@@ -39,9 +39,9 @@ class FilePattern:
 
 
 class OMRApp:
-    def __init__(self, root, on_start):
+    def __init__(self, root):
         self.root = root
-        self.on_start = on_start
+        #self.on_start = on_start
         self.is_running = False
 
         root.title('OMR 채점기')
@@ -91,10 +91,11 @@ class OMRApp:
         ttk.Separator(root).pack(fill='x')
 
         # ===== 로그 =====
-        prog_frame = ttk.Frame(root, padding=10)
+        prog_frame = ttk.Frame(root, padding=5)
         prog_frame.pack(fill='both', expand=True)
 
-        ttk.Label(prog_frame, text='진행 상태 상세보기').pack(anchor='w')
+        ttk.Label(prog_frame, text='진행 상태 상세보기')\
+                              .pack(padx=5, pady=5,anchor='w')
 
         self.prog_log = tk.Text(prog_frame, height=10,
                                 state='disabled', wrap='word')
@@ -103,7 +104,7 @@ class OMRApp:
         self.prog_log.config(yscrollcommand=scrollbar.set)
 
         scrollbar.pack(side='right', fill='y')
-        self.prog_log.pack(fill='both', expand=True)
+        self.prog_log.pack(padx=(5,0), pady=5, fill='both', expand=True)
 
     # ===== 기능 =====
 
@@ -141,13 +142,14 @@ class OMRApp:
         
         self.is_running = True
 
-        #thread = threading.Thread(
-        #    target=self.run_processing
-        #)
-        #thread.start()
-
         self.proc = subprocess.Popen(
-            ['python', 'omr_main_test.py'],
+            ['python', 'omr_worker.py',
+             self.subject_name.get(),
+             str(self.extra_on.get()),
+             self.scanfile.get(),
+             self.students.get(),
+             self.corrects.get()
+             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True
@@ -172,14 +174,14 @@ class OMRApp:
     def stop_app(self):
         if self.is_running:
             if not messagebox.askokcancel(
-                '중지',
+                '채점 중지',
                 '작업을 중지하시겠습니까?'
             ):
                 return
         
             self.proc.kill()
             self.is_running = False
-            self.append_log('작업이 중지되었습니다.')
+            self.append_log('===== 중지됨 =====\n')
 
     def close_app(self):
         if self.is_running:

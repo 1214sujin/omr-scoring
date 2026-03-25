@@ -1,3 +1,4 @@
+import sys
 import cv2
 import numpy as np
 from pdf2image import convert_from_path
@@ -5,59 +6,20 @@ from pdf2image import convert_from_path
 from omr_read import *
 from omr_draw import *
 
-'''
-    sid = []
+def log(*msg):
+    print(*msg, flush=True)
 
-    for r in range(SID_MARKS, 0, -1):
-
-        row = boxes[r-1:r, :]
-
-        sid.append(str(select_choices(th, row)[0]))
-
-    return ''.join(sid)
-'''
-
-'''
-    points = []
-
-    for r in range(EXTRA_POINT_MARKS):
-
-        row = boxes[r-1:r, :]
-
-        choices = select_choices(th, row)
-
-        if not choice:
-
-            points.append(0)
-
-        else:
-
-            points.append(choices[0])
-
-    return points[0]*0.1 + points[1] + points[2]*10
-'''
-
-'''
-    answers = []
-    
-    for r_start, r_end in [(5,10), (0,5)]:
-
-        for c in range(30):
-
-            row = boxes[r_start:r_end, c:c+1]
-
-            answers.append(select_choices(th, row))
-
-    return answers
-'''
 def main():
+    
+    log('sys.argv:', sys.argv)
+    subject_name, extra_on, pdf_path, students_path, corrects_path = sys.argv[1:]
 
-    print("\n===== OMR 화면 인식 디버깅 =====", flush=True)
+    log("\n===== OMR 화면 인식 디버깅 =====")
 
     #pdf_name = input("PDF 파일명을 입력하세요: ").strip()
     pdf_name = 'omr_test'
 
-    print("\nPDF 읽는 중...", flush=True)
+    log("\nPDF 읽는 중...")
 
     page = convert_from_path(pdf_name + '.pdf')[6]
 
@@ -92,9 +54,9 @@ def main():
         for q,a in enumerate(answers):
             row[f"{q+1}"] = a
             
-        print('===== answers ======', flush=True)
-        print('학번: ' + sid, flush=True)
-        print(row, flush=True)
+        log('===== answers ======')
+        log('학번: ' + sid)
+        log(row)
 
     finally:
 
