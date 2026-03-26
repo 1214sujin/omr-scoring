@@ -20,16 +20,17 @@ def main():
 
     log('===== 채점 시작 =====')
 
-    log('\nPDF 읽는 중...')
+    log('PDF 읽는 중...')
 
     # 답안지
     pages = convert_from_path(pdf_path)
+    TOTAL_PAGES = len(pages)
+    log(f'답안지 수: {TOTAL_PAGES}')
+    log('채점 중...')
 
     results = {}
 
     for i,page in enumerate(pages):
-
-        log(f'{i+1} 페이지 처리 중')
         
         # 이미지 전처리
         img = np.array(page)
@@ -62,29 +63,25 @@ def main():
 
             # 엑셀 답안
             results[sid] = answers
-            #result = {"학번":sid, "성명":std_list[sid]}
-
-            #for q,a in enumerate(answers):
-            #    row[f"{q+1}"] = ','.join(map(str,a))
-
-            #results.append(row)
             
         except Exception as e:
             
             log(f'{i+1} 페이지 처리 실패:', e)
 
-        #finally:
-            
+        finally:
+
             # 디버깅용 이미지 생성
-            #debug_img_name = f'{subject_name}/{subject_name}-답안지/{i+1}-{sid}.png'
+            debug_img_name = f'{subject_name}/{subject_name}-답안지/{sid}.png'
 
-            #flat_boxes = [b for row in answer_boxes for b in row]
+            flat_boxes = [b for row in answer_boxes for b in row]
 
-            #boxes = answer_boxes+extra_boxes+sid_boxes
-            #marks = answer_marks+extra_marks+sid_marks
+            boxes = answer_boxes+extra_boxes+sid_boxes
+            marks = answer_marks+extra_marks+sid_marks
 
-            #debug_img = draw_debug(img, timing_marks, boxes, marks, debug_img_name)
+            debug_img = draw_debug(img, timing_marks, boxes, marks, debug_img_name)
 
+    log('결과 저장 중...')
+    
     # 학생 리스트
     std_list = load_students_list(students_path)
 

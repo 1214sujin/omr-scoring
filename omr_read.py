@@ -11,7 +11,7 @@ STEP = 49.7
 END = 1600
 BUBBLE_SIZE = 27
 
-RATIO_THRESHOLD = 0.30
+RATIO_THRESHOLD = 0.26
 
 
 ##### 마킹 찾기 #####
@@ -151,7 +151,7 @@ def detect_answers(marks):
 
             for r in range(r_start, r_end):
                 if marks[r][c] > 0:
-                    col_values.append(r - r_start)
+                    col_values.append(r_end - r)
 
             answers.append(col_values)
     #print('answers:', answers)
