@@ -32,11 +32,24 @@ def main():
 
     for i,page in enumerate(pages):
         
-        # 이미지 전처리
         img = np.array(page)
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR) # openCV가 읽는 방식대로 변경
+        
+        # 이미지 전처리
+        # openCV 색상체계(BGR)
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # 빨간색 필터링 (빨강 -> 하양)
+        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+        lower_red = np.array([0, 100, 70])
+        upper_red = np.array([10, 255, 255])
+
+        red_mask = cv2.inRange(hsv, lower_red, upper_red)
+        
+        mask_img = img.copy()
+        mask_img[red_mask > 0] = (255,255,255)
+
+        gray = cv2.cvtColor(mask_img, cv2.COLOR_BGR2GRAY)
 
         th = cv2.threshold(
             gray,

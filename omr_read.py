@@ -11,7 +11,7 @@ STEP = 49.7
 END = 1600
 BUBBLE_SIZE = 27
 
-RATIO_THRESHOLD = 0.26
+RATIO_THRESHOLD = 0.2
 
 
 ##### 마킹 찾기 #####
@@ -36,7 +36,7 @@ def extract_boxes(th):
         area = w*h
 
         if (
-            x < w_img * 0.05 and   # 왼쪽 영역
+            x < 20 and   # 왼쪽 영역
             50 < area < 2000       # 적당한 영역
         ):
             marks.append((x,y,w,h))
