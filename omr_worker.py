@@ -34,6 +34,7 @@ def main():
         
         # 이미지 전처리
         img = np.array(page)
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR) # openCV가 읽는 방식대로 변경
 
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 

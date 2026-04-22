@@ -20,7 +20,7 @@ def draw_debug(img, timing_marks, boxes, marks, out_name="omr_debug.png"):
     for row_boxes, row_marks in zip(boxes, marks):
         for (bx, by, bw, bh), r in zip(row_boxes, row_marks):
 
-            color = (0,0,255) if r > 0 else (255,0,0)
+            color = (0,255,0) if r > 0 else (255,0,0)
 
             cv2.rectangle(
                 debug,
@@ -35,6 +35,9 @@ def draw_debug(img, timing_marks, boxes, marks, out_name="omr_debug.png"):
     if dir_path:
         os.makedirs(dir_path, exist_ok=True)
 
+    debug = cv2.rotate(debug, cv2.ROTATE_90_CLOCKWISE)
+
+
     result, encoded = cv2.imencode('.png', debug)
 
     if result:
@@ -44,20 +47,3 @@ def draw_debug(img, timing_marks, boxes, marks, out_name="omr_debug.png"):
         print("디버그 이미지 저장 실패:", out_name)
     
     return;
-
-'''
-    for i,(bx,by,bw,bh) in enumerate(boxes):
-
-        # answer box 표시
-        cv2.rectangle(
-            debug,
-            (bx,by),
-            (bx+bw,by+bh),
-            (0,255,0),
-            1
-        )
-            
-    cv2.imwrite(out_name, debug)
-    
-    return
-'''
