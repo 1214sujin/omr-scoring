@@ -11,7 +11,7 @@ class FilePattern:
         if type_ == 'pdf':
             self.type_tuple = ("PDF", "*.pdf")
         elif type_ == 'excel':
-            self.type_tuple = ("Excel files", "*.xlsx *.xls")
+            self.type_tuple = ("Excel files", "*.xlsx")
 
         frame = ttk.Frame(root)
         frame.pack(fill='x', pady=2)
@@ -39,6 +39,9 @@ class FilePattern:
 
 
 class OMRApp:
+
+    INVALID_CHARS = r'[\\/:*?"<>|]'
+    
     def __init__(self, root):
         self.root = root
         #self.on_start = on_start
@@ -58,10 +61,11 @@ class OMRApp:
         ttk.Label(row_subject, text='채점 교과목명:').pack(side='left', padx=5)
 
         self.subject_name = tk.StringVar()
-        ttk.Entry(row_subject, textvariable=self.subject_name, width=30)\
+        ttk.Entry(row_subject, textvariable=self.subject_name, width=30, validate="key",
+                  validatecommand=(row_subject.register(self.validate_filename), "%P"))\
             .pack(side='left', fill='x', expand=True)
 
-        self.extra_on = tk.IntVar(value=False)
+        self.extra_on = tk.BooleanVar(value=False)
         extra_checkbox = ttk.Checkbutton(row_subject, text='주관식 점수 포함',
                                          variable=self.extra_on)\
                             .pack(side='left', padx=5)
@@ -70,6 +74,14 @@ class OMRApp:
         self.scanfile = FilePattern(find_frame, 'pdf', '답안지 스캔 파일')
         self.corrects = FilePattern(find_frame, 'excel', '정답지 파일')
         self.students = FilePattern(find_frame, 'excel', '수강생 명단')
+
+        style = ttk.Style()
+        style.configure('Custom.Warning.TLabel', foreground='red')
+
+        ttk.Label(find_frame, text='※ 교과목명은 파일명에 사용 가능해야 합니다.'
+                 + '\n※ 답안지는 .pdf, 정답지 및 수강명단은'
+                 + '.xlsx만 가능합니다.', style='Custom.Warning.TLabel')\
+                 .pack(side='left', padx=10)
 
         # ===== 버튼 =====
         btn_frame = ttk.Frame(root)
@@ -108,6 +120,18 @@ class OMRApp:
 
     # ===== 기능 =====
 
+    def validate_filename(self, new_value):
+        if new_value == "":
+            return True
+
+        if re.search(self.INVALID_CHARS, new_value):
+            return False
+
+        if new_value.endswith(" ") or new_value.endswith("."):
+            return False
+
+        return True
+
     def reset(self):
         self.subject_name.set('')
 
@@ -121,7 +145,7 @@ class OMRApp:
         self.prog_log.config(state='disabled')
         self.prog_log.see('end')
 
-    def read_log(self): #####
+    def read_log(self):
         for line in self.proc.stdout:
             self.append_log(line.strip())
         self.is_running = False
@@ -152,24 +176,11 @@ class OMRApp:
              ],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            text=True
+            text=True,
+            creationflags=subprocess.CREATE_NO_WINDOW
         )
         
         threading.Thread(target=self.read_log, daemon=True).start()
-
-
-    #def run_processing(self):
-
-    #    self.on_start(
-    #        self.subject_name.get(),
-    #        self.extra_on.get(),
-    #        self.scanfile.get(),
-    #        self.students.get(),
-    #        self.corrects.get(),
-    #        self.append_log
-    #    )
-
-    #    self.is_running = False
 
     def stop_app(self):
         if self.is_running:
