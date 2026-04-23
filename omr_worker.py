@@ -86,14 +86,15 @@ def main():
         finally:
 
             # 디버깅용 이미지 생성
-            debug_img_name = f'{subject_name}/{subject_name}-답안지/{sid}.png'
+            debug_img_path = f'결과출력/{subject_name}/{subject_name}_답안지스캔'
+
 
             flat_boxes = [b for row in answer_boxes for b in row]
 
             boxes = answer_boxes+extra_boxes+sid_boxes
             marks = answer_marks+extra_marks+sid_marks
 
-            debug_img = draw_debug(img, timing_marks, boxes, marks, debug_img_name)
+            debug_img = draw_debug(img, timing_marks, boxes, marks, debug_img_path, sid)
 
     log('결과 저장 중...')
     

@@ -114,7 +114,7 @@ def save_result(results, extra, std_list, answer_key, score_table, subject_name)
         for q in range(TOTAL_QUESTIONS):
             ws.cell(row=excel_row, column=offset+q, value=row[f'A{q+1}'])
 
-    out = f'{subject_name}/{subject_name}-채점결과.xlsx'
+    out = f'결과출력/{subject_name}/{subject_name}_채점결과.xlsx'
     wb.save(out)
     
     print(f'결과 파일: {out}')

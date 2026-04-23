@@ -13,7 +13,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-#input('종료하려면 Enter를 누르세요.')
-
-
