@@ -14,9 +14,10 @@ def log(*msg):
     print(*msg, flush=True)
 
 def main():
-    subject_name, extra_on, pdf_path, students_path, corrects_path = sys.argv[1:]
+    subject_name, extra_on, pdf_path, students_path, corrects_path, ratio_threshold = sys.argv[1:]
 
-    extra_on = bool(extra_on)
+    extra_on = bool(int(extra_on))
+    ratio_threshold = float(ratio_threshold)
 
     log('===== 채점 시작 =====')
 
@@ -64,9 +65,9 @@ def main():
             timing_marks, answer_boxes, extra_boxes, sid_boxes = extract_boxes(th)
 
             # 마킹 인식
-            answer_marks = detect_marks(th, answer_boxes)
-            extra_marks = detect_marks(th, extra_boxes)
-            sid_marks = detect_marks(th, sid_boxes)
+            answer_marks = detect_marks(th, answer_boxes, ratio_threshold)
+            extra_marks = detect_marks(th, extra_boxes, ratio_threshold)
+            sid_marks = detect_marks(th, sid_boxes, ratio_threshold)
 
             answers = detect_answers(answer_marks)
             sid = detect_sid(sid_marks)

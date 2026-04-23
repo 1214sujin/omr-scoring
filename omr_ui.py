@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import threading
 import subprocess
+import re
 
 class FilePattern:
     def __init__(self, root, type_, title):
@@ -65,7 +66,7 @@ class OMRApp:
                   validatecommand=(row_subject.register(self.validate_filename), "%P"))\
             .pack(side='left', fill='x', expand=True)
 
-        self.extra_on = tk.BooleanVar(value=False)
+        self.extra_on = tk.IntVar(value=False)
         extra_checkbox = ttk.Checkbutton(row_subject, text='주관식 점수 포함',
                                          variable=self.extra_on)\
                             .pack(side='left', padx=5)
@@ -76,12 +77,29 @@ class OMRApp:
         self.students = FilePattern(find_frame, 'excel', '수강생 명단')
 
         style = ttk.Style()
-        style.configure('Custom.Warning.TLabel', foreground='red')
+        style.configure('Warning.TLabel', foreground='red')
 
         ttk.Label(find_frame, text='※ 교과목명은 파일명에 사용 가능해야 합니다.'
                  + '\n※ 답안지는 .pdf, 정답지 및 수강명단은'
-                 + '.xlsx만 가능합니다.', style='Custom.Warning.TLabel')\
+                 + '.xlsx만 가능합니다.', style='Warning.TLabel')\
                  .pack(side='left', padx=10)
+
+        # ===== 입력 감도 조절 =====
+        ratio_frame = ttk.Frame(root)
+        ratio_frame.pack(fill='x', pady=(5,0))
+
+        ttk.Label(ratio_frame, \
+                  text='마킹 인식 감도(0~0.5):')\
+                  .pack(side='left', padx=5)
+        
+        self.ratio_threshold = tk.DoubleVar(value=0.2)
+        ttk.Spinbox(ratio_frame, textvariable=self.ratio_threshold,
+                    from_=0, to=0.5, width=5, increment=0.01, state='readonly')\
+                    .pack(side='left', padx=5)
+
+        ttk.Label(ratio_frame, text='※ 작을수록 더 밝은 칸까지 마킹으로 판정합니다.',
+                  style='Warning.TLabel')\
+                  .pack(side='left', padx=10, fill='x', expand=True)
 
         # ===== 버튼 =====
         btn_frame = ttk.Frame(root)
@@ -172,7 +190,8 @@ class OMRApp:
              str(self.extra_on.get()),
              self.scanfile.get(),
              self.students.get(),
-             self.corrects.get()
+             self.corrects.get(),
+             str(self.ratio_threshold.get())
              ],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,

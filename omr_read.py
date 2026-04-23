@@ -11,8 +11,6 @@ STEP = 49.7
 END = 1600
 BUBBLE_SIZE = 27
 
-RATIO_THRESHOLD = 0.2
-
 
 ##### 마킹 찾기 #####
 
@@ -79,7 +77,7 @@ def extract_boxes(th):
     return marks, answer_boxes, extra_boxes, sid_boxes
 
 
-def detect_marks(th, boxes):
+def detect_marks(th, boxes, ratio_threshold):
 
     result = []
 
@@ -92,7 +90,7 @@ def detect_marks(th, boxes):
             cell = th[y:y+h, x:x+w]
             ratio = np.sum(cell) / 255 / cell.size
 
-            row_result.append(ratio if ratio > RATIO_THRESHOLD else 0)
+            row_result.append(ratio if ratio > ratio_threshold else 0)
 
         result.append(row_result)
 
