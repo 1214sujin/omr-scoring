@@ -3,7 +3,7 @@ from openpyxl import load_workbook
 
 def load_students_list(path):
 
-    df = pd.read_excel(path)
+    df = pd.read_excel(path, dtype=str, keep_default_na=False)
 
     std_list = {}
 
@@ -15,19 +15,20 @@ def load_students_list(path):
 
         std_list[sid] = name
 
-    #print('std_list:', std_list)
-
     return std_list
 
 
 def load_correct_answer(path):
 
-    df = pd.read_excel(path)
+    df = pd.read_excel(path, dtype=str, keep_default_na=False)
 
     answer_key = {}
     score_table = {}
 
     for _, row in df.iterrows():
+
+        if not row['정답'].strip():
+            break
 
         q = int(row['문항']) - 1
 
@@ -36,9 +37,6 @@ def load_correct_answer(path):
         answer_key[q] = answers
 
         score_table[q] = float(row['배점'])
-
-    #print('answer_key:', answer_key)
-    #print('score_table:', score_table)
 
     return answer_key, score_table
 
@@ -58,7 +56,6 @@ def save_result(results, extra, std_list, answer_key, score_table, subject_name)
         row = {'학번': sid, '이름': sname,
                '객관식': 0, '주관식': 0, '총점': 0, '석차': 0}
         score = 0
-        #print('results[sid]:', results[sid])
 
         # 채점
         if sid in results:
